@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: DAO/PlayerTournamentSqliteDAO.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: DAO/PlayerTournamentSqliteDAO.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { PlayerTournamentDAO } from "./PlayerTournamentDAO.js";
+import sqlite3 from "sqlite3";
+import { open } from "sqlite";
+
+/**
+ * PlayerTournament DAO for SQLite.
+ * @extends PlayerTournamentDAO
+ * @class
+ */
+export class PlayerTournamentSqliteDAO extends PlayerTournamentDAO {
+    constructor() {
+        super();
+
+        this.db = open({
+            filename: './BDD/database.sqlite',
+            driver: sqlite3.Database
+        });
+    }
+
+    /**
+     * Retrieves playerTournaments based on the specified filters.
+     * @param {object} filters - The filters to apply when retrieving playerTournaments.
+     * @returns {Array} - An array containing the playerTournaments that match the specified filters.
+     */
+    async getPlayerTournaments(filters) {
+        const db_ = await this.db;
+        let sql = 'SELECT * FROM PlayerTournament';
+        let sqlparams = [];
+        let filtersparam = [];
+
+        if (filters.id) {
+            sqlparams.push('id = ?');
+            filtersparam.push(filters.id);
+        }
+
+        if (filters.player_id) {
+            sqlparams.push('player_id = ?');
+            filtersparam.push(filters.playerId);
+        }
+
+        if (filters.tournament_id) {
+            sqlparams.push('tournament_id = ?');
+            filtersparam.push(filters.tournamentId);
+        }
+
+        if (sqlparams.length > 0)
+            sql += ' WHERE ' + sqlparams.join(' AND ');
+
+        return await db_.all(sql, filtersparam);
+    }
+
+    /**
+     * Creates a new playerTournament.
+     * @param {object} playerTournament - The playerTournament information to create.
+     * @returns {object} - The created playerTournament.
+     */
+    async createPlayerTournament(playerTournament) {
+        const db_ = await this.db;
+        let sql = 'INSERT INTO PlayerTournament (player_id, tournament_id) VALUES (?, ?)';
+        let sqlparams = [playerTournament.player_id, playerTournament.tournament_id];
+
+        return await db_.run(sql, sqlparams);
+    }
+
+    /**
+     * Updates the information of an existing playerTournament.
+     * @param {string} id - The identifier of the playerTournament to update.
+     * @param {object} playerTournament - The new playerTournament information.
+     * @returns {object} - The updated playerTournament.
+     */
+    async updatePlayerTournament(id, playerTournament) {
+        const db_ = await this.db;
+        let sql = 'UPDATE PlayerTournament SET ';
+        let sqlparams = [];
+        let sqlparams2 = [];
+
+        if (playerTournament.player_id) {
+            sqlparams.push('player_id = ?');
+            sqlparams2.push(playerTournament.player_id);
+        }
+
+        if (playerTournament.tournament_id) {
+            sqlparams.push('tournament_id = ?');
+            sqlparams2.push(playerTournament.tournament_id);
+        }
+
+        if (sqlparams.length > 0)
+            sql += sqlparams.join(', ');
+
+        sql += ' WHERE id = ?';
+        sqlparams2.push(id);
+
+        return await db_.run(sql, sqlparams2);
+    }
+
+    /**
+     * Deletes an existing playerTournament.
+     * @param {string} id - The identifier of the playerTournament to delete.
+     * @returns {object} - The deleted playerTournament.
+     */
+    async deletePlayerTournament(id) {
+        const db_ = await this.db;
+        let sql = 'DELETE FROM PlayerTournament WHERE id = ?';
+
+        return await db_.run(sql, id);
+    }
+}
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="DAOFactory.html">DAOFactory</a></li><li><a href="DAOSqliteFactory.html">DAOSqliteFactory</a></li><li><a href="PlayerDAO.html">PlayerDAO</a></li><li><a href="PlayerSqliteDAO.html">PlayerSqliteDAO</a></li><li><a href="PlayerTournamentDAO.html">PlayerTournamentDAO</a></li><li><a href="PlayerTournamentSqliteDAO.html">PlayerTournamentSqliteDAO</a></li><li><a href="PlayerTournamentsController.html">PlayerTournamentsController</a></li><li><a href="PlayersController.html">PlayersController</a></li><li><a href="TournamentDAO.html">TournamentDAO</a></li><li><a href="TournamentSqliteDAO.html">TournamentSqliteDAO</a></li><li><a href="TournamentsController.html">TournamentsController</a></li><li><a href="UserDAO.html">UserDAO</a></li><li><a href="UserSqliteDAO.html">UserSqliteDAO</a></li><li><a href="UsersController.html">UsersController</a></li></ul><h3>Global</h3><ul><li><a href="global.html#PlayerTournamentServices">PlayerTournamentServices</a></li><li><a href="global.html#PlayersServices">PlayersServices</a></li><li><a href="global.html#TournamentsServices">TournamentsServices</a></li><li><a href="global.html#UsersServices">UsersServices</a></li><li><a href="global.html#createDatabase">createDatabase</a></li><li><a href="global.html#disconnectPath">disconnectPath</a></li><li><a href="global.html#loginPath">loginPath</a></li><li><a href="global.html#playerTournamentPath">playerTournamentPath</a></li><li><a href="global.html#playersPath">playersPath</a></li><li><a href="global.html#tournamentsPath">tournamentsPath</a></li><li><a href="global.html#usersPath">usersPath</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Mon Dec 11 2023 22:54:20 GMT+0100 (heure normale d’Europe centrale)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: bdd.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: bdd.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import sqlite3 from "sqlite3";
+import { open } from "sqlite";
+
+/**
+ * Creation de toutes les tables de la base de données et insertion de données fictives.
+ */
+export async function createDatabase() {
+    const db = await open({
+        filename: './BDD/database.sqlite',
+        driver: sqlite3.Database
+    });
+
+    // Création de la table "Joueurs"
+    await db.exec(`CREATE TABLE IF NOT EXISTS Player (
+    id INTEGER PRIMARY KEY,
+    name TEXT,
+    pseudo TEXT,
+    email TEXT,
+    mainGame TEXT,
+    score INTEGER
+  )`);
+
+    // Création la table "Tournois"
+    await db.exec(`CREATE TABLE IF NOT EXISTS Tournament (
+    id INTEGER PRIMARY KEY,
+    name TEXT,
+    startDate DATE,
+    endDate DATE,
+    game TEXT,
+    place TEXT,
+    winningPrice INTEGER
+  )`);
+
+    // Création de la table PlayerTournament pour liée les joueurs aux tournois
+    await db.exec(`CREATE TABLE IF NOT EXISTS PlayerTournament (
+    id INTEGER PRIMARY KEY,
+    player_id INTEGER,
+    tournament_id INTEGER,
+    FOREIGN KEY(player_id) REFERENCES Player(id),
+    FOREIGN KEY(tournament_id) REFERENCES Tournament(id)
+  )`);
+
+    // Création de la table User pour la gestion des utilisateurs
+    await db.exec(`CREATE TABLE IF NOT EXISTS User (
+    id INTEGER PRIMARY KEY,
+    username TEXT,
+    password TEXT
+  )`);
+
+    // Insertion des données fictives dans la table "Joueurs"
+    await db.exec(`INSERT INTO Player (name, pseudo, email, mainGame, score) VALUES
+  ('John Doe', 'JohnnyGamer', 'john@example.com', 'Fortnite', 1200),
+  ('Alice Smith', 'GameQueen', 'alice@example.com', 'Minecraft', 950),
+  ('Bob Johnson', 'ProGamer123', 'bob@example.com', 'Overwatch', 800),
+  ('Eva Brown', 'GamingEva', 'eva@example.com', 'Apex Legends', 1100),
+  ('Michael White', 'GameMasterMike', 'michael@example.com', 'League of Legends', 1350),
+  ('Sarah Davis', 'GamerSarah', 'sarah@example.com', 'Call of Duty', 1000),
+  ('Daniel Wilson', 'DanielGamer', 'daniel@example.com', 'Counter-Strike', 950),
+  ('Olivia Jones', 'OliviaPlays', 'olivia@example.com', 'Among Us', 750),
+  ('James Clark', 'ProJames', 'james@example.com', 'Valorant', 1050),
+  ('Sophia Lee', 'SophiaGaming', 'sophia@example.com', 'Rainbow Six Siege', 1200),
+  ('Liam Anderson', 'LiamGamer', 'liam@example.com', 'FIFA 22', 900),
+  ('Ava Hall', 'AvaPlays', 'ava@example.com', 'Rocket League', 800),
+  ('Emily Martin', 'EmilyGamer', 'emily@example.com', 'World of Warcraft', 1300),
+  ('William Wilson', 'WilliamPlays', 'william@example.com', 'GTA V', 950),
+  ('Grace Harris', 'GamerGrace', 'grace@example.com', 'Among Us', 850),
+  ('Benjamin Davis', 'BenGamer', 'benjamin@example.com', 'Fortnite', 1150),
+  ('Chloe Lee', 'ChloePlays', 'chloe@example.com', 'Valorant', 950),
+  ('Henry Smith', 'HenryGamer', 'henry@example.com', 'Minecraft', 1200),
+  ('Zoe Johnson', 'ZoePlays', 'zoe@example.com', 'Overwatch', 1000),
+  ('Liam Harris', 'LiamPlays', 'liam@example.com', 'League of Legends', 1350),
+  ('Mia Clark', 'MiaGamer', 'mia@example.com', 'Call of Duty', 950),
+  ('Noah Wilson', 'NoahPlays', 'noah@example.com', 'Counter-Strike', 1100),
+  ('Ella Anderson', 'EllaGamer', 'ella@example.com', 'Fortnite', 1250),
+  ('Lucas Jones', 'LucasPlays', 'lucas@example.com', 'Minecraft', 1050),
+  ('Aria Martin', 'AriaGamer', 'aria@example.com', 'Rocket League', 850),
+  ('Liam Davis', 'LiamPlays', 'liam@example.com', 'Valorant', 1000),
+  ('Lily Wilson', 'LilyPlays', 'lily@example.com', 'Apex Legends', 1100),
+  ('Mason Smith', 'MasonGamer', 'mason@example.com', 'League of Legends', 1300),
+  ('Olivia White', 'OliviaPlays', 'olivia@example.com', 'Call of Duty', 950),
+  ('Lucas Brown', 'LucasGamer', 'lucas@example.com', 'Counter-Strike', 1000),
+  ('Ava Davis', 'AvaPlays', 'ava@example.com', 'Rocket League', 800),
+  ('Sophia Martin', 'SophiaGamer', 'sophia@example.com', 'Fortnite', 1150),
+  ('Jackson Lee', 'JacksonPlays', 'jackson@example.com', 'Minecraft', 1100),
+  ('Ella Smith', 'EllaGamer', 'ella@example.com', 'Overwatch', 950),
+  ('Aiden Harris', 'AidenPlays', 'aiden@example.com', 'League of Legends', 1250),
+  ('Grace Davis', 'GraceGamer', 'grace@example.com', 'Call of Duty', 1000),
+  ('Liam Martin', 'LiamPlays', 'liam@example.com', 'Counter-Strike', 900),
+  ('Zoe Smith', 'ZoeGamer', 'zoe@example.com', 'Rocket League', 850),
+  ('Noah Jones', 'NoahPlays', 'noah@example.com', 'Valorant', 1100),
+  ('Sophia Brown', 'SophiaPlays', 'sophia@example.com', 'Apex Legends', 1200),
+  ('Ethan Davis', 'EthanGamer', 'ethan@example.com', 'League of Legends', 1300),
+  ('Olivia Lee', 'OliviaPlays', 'olivia@example.com', 'Call of Duty', 1000),
+  ('Liam Harris', 'LiamPlays', 'liam@example.com', 'Counter-Strike', 900),
+  ('Aria White', 'AriaGamer', 'aria@example.com', 'Rocket League', 850),
+  ('Chloe Martin', 'ChloePlays', 'chloe@example.com', 'Valorant', 1100),
+  ('Henry Smith', 'HenryGamer', 'henry@example.com', 'Minecraft', 1200),
+  ('Zoe Johnson', 'ZoePlays', 'zoe@example.com', 'Overwatch', 1000),
+  ('Liam Harris', 'LiamPlays', 'liam@example.com', 'League of Legends', 1350),
+  ('Mia Clark', 'MiaGamer', 'mia@example.com', 'Call of Duty', 950)`);
+
+    // Insertion des données fictives dans la table "Tournois"
+    await db.exec(`INSERT INTO Tournament (name, startDate, endDate, game, place, winningPrice) VALUES
+    ('Tournoi Fortnite Battle Royale', '2023-10-15', '2023-10-16', 'Fortnite', 'Paris', 500),
+    ('Tournoi Minecraft Masters', '2023-11-01', '2023-11-02', 'Minecraft', 'New York', 300),
+    ('Tournoi Apex Legends Championship', '2023-11-10', '2023-11-12', 'Apex Legends', 'Los Angeles', 700),
+    ('Tournoi League of Legends Worlds', '2023-12-05', '2023-12-18', 'League of Legends', 'Shanghai', 1000),
+    ('Tournoi Call of Duty Championship', '2023-12-15', '2023-12-17', 'Call of Duty', 'Dallas', 800),
+    ('Tournoi Counter-Strike: Global Offensive Major', '2024-01-20', '2024-01-30', 'Counter-Strike', 'Stockholm', 1200),
+    ('Tournoi Valorant Masters', '2024-02-10', '2024-02-15', 'Valorant', 'Berlin', 600),
+    ('Tournoi Rainbow Six Siege Pro League', '2024-03-05', '2024-03-10', 'Rainbow Six Siege', 'Montreal', 900),
+    ('Tournoi Rocket League Championship', '2024-04-01', '2024-04-05', 'Rocket League', 'Madrid', 400),
+    ('Tournoi Hearthstone Masters', '2024-05-15', '2024-05-30', 'Hearthstone', 'Seattle', 2000),
+    ('Tournoi FIFA 24 World Cup', '2024-06-10', '2024-06-12', 'FIFA 24', 'Los Angeles', 300),
+    ('Tournoi Super Smash Bros Ultimate Showdown', '2024-07-20', '2024-07-25', 'Super Smash Bros Ultimate', 'New York', 1000),
+    ('Tournoi Overwatch League Grand Finals', '2024-08-05', '2024-08-15', 'Overwatch', 'London', 700),
+    ('Tournoi GTA V Online Championship', '2024-09-10', '2024-09-12', 'GTA V', 'Cologne', 400),
+    ('Tournoi Among Us Masters', '2024-10-01', '2024-10-10', 'Among Us', 'Seoul', 800),
+    ('Tournoi World of Warcraft Arena Championship', '2024-11-10', '2024-11-15', 'World of Warcraft', 'Atlanta', 600),
+    ('Tournoi Rocket League Championship Series', '2025-01-05', '2025-01-10', 'Rocket League', 'Barcelona', 500),
+    ('Tournoi Dota 2 The International', '2025-02-01', '2025-02-15', 'Dota 2', 'Singapore', 1500),
+    ('Tournoi Call of Duty Warzone Masters', '2025-03-01', '2025-03-07', 'Call of Duty: Warzone', 'Las Vegas', 750),
+    ('Tournoi Super Mario Bros Speedrun Challenge', '2025-04-01', '2025-04-05', 'Super Mario Bros', 'Tokyo', 200),
+    ('Tournoi Overwatch League Grand Finals', '2025-05-10', '2025-05-20', 'Overwatch', 'Paris', 1000),
+    ('Tournoi Rainbow Six Siege Pro League', '2025-06-05', '2025-06-10', 'Rainbow Six Siege', 'Berlin', 900),
+    ('Tournoi Apex Legends Championship', '2025-07-01', '2025-07-05', 'Apex Legends', 'Los Angeles', 800),
+    ('Tournoi Valorant Masters', '2025-08-01', '2025-08-10', 'Valorant', 'New York', 1200),
+    ('Tournoi FIFA 25 World Cup', '2025-09-05', '2025-09-15', 'FIFA 25', 'Madrid', 700),
+    ('Tournoi Hearthstone Masters', '2025-10-01', '2025-10-10', 'Hearthstone', 'London', 1100),
+    ('Tournoi Rocket League Championship Series', '2025-11-01', '2025-11-10', 'Rocket League', 'Paris', 600),
+    ('Tournoi League of Legends Worlds', '2025-12-01', '2025-12-15', 'League of Legends', 'Shanghai', 1500),
+    ('Tournoi Counter-Strike: Global Offensive Major', '2026-01-05', '2026-01-15', 'Counter-Strike', 'Copenhagen', 800),
+    ('Tournoi Minecraft Masters', '2026-02-01', '2026-02-10', 'Minecraft', 'Stockholm', 500)
+  `);
+
+    // Récupérez la liste des joueurs et des tournois depuis la base de données
+    const players = await db.all("SELECT id FROM Player");
+    const tournaments = await db.all("SELECT id FROM Tournament");
+
+    // Assurez-vous que chaque joueur est associé à au moins un tournoi
+    for (const player of players) {
+        // Sélectionnez un tournoi de manière aléatoire parmi la liste des tournois
+        const randomTournament = tournaments[Math.floor(Math.random() * tournaments.length)];
+
+        // Associez le joueur au tournoi sélectionné
+        await db.run(
+            "INSERT INTO PlayerTournament (player_id, tournament_id) VALUES (?, ?)",
+            [player.id, randomTournament.id]
+        );
+    }
+
+    // Création des utilisateurs
+    await db.exec(`INSERT INTO User (username, password) VALUES
+    ('admin', 'admin'),
+    ('user', 'user')`);
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#createDatabase">createDatabase</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Mon Dec 11 2023 08:22:13 GMT+0100 (heure normale d’Europe centrale)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

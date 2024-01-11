@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Controller/UsersController.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Controller/UsersController.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import UserServices from "../Services/UsersServices.js";
+import bcrypt from "bcrypt";
+
+/**
+ * Controller for managing user operations.
+ * @class
+ * @classdesc This class manages the users.
+ */
+class UsersController {
+    constructor() {}
+
+    /**
+     * Get a user by query parameters.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     * @returns {Promise&lt;void>} - A promise that resolves when the user is retrieved.
+     */
+    async getUser(req, res) {
+        let user = [];
+        
+        try{
+            user = await UserServices.getUser(req.query);
+        }
+        catch(err){
+            res.status(500).json({ message: err.message });
+        }
+
+        if (user.length > 0) {
+            res.status(200).json(user);
+        } else {
+            res.status(404).json({ message: "No user found" });
+        }
+    }
+
+    /**
+     * Create a new user.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     * @returns {Promise&lt;void>} - A promise that resolves when the user is created.
+     */
+    createUser(req, res) {
+        const user = req.body;
+
+        // Chiffrer le mot de passe
+        const salt = bcrypt.genSaltSync(10);
+        user.password = bcrypt.hashSync(user.password, salt);
+
+        try {
+            UserServices.createUser(user);
+            res.status(200).json({ message: "User created" });
+        }
+        catch(err) {
+            res.status(500).json({ message: err.message });
+        }
+    }
+
+    /**
+     * Update an existing user.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     * @returns {Promise&lt;void>} - A promise that resolves when the user is updated.
+     */
+    updateUser(req, res) {
+        const id = req.params.id;
+        const user = req.body;
+
+        try {
+            UserServices.updateUser(id, user);
+            res.status(200).json({ message: "User updated" });
+        }
+        catch(err) {
+            res.status(500).json({ message: err.message });
+        }
+    }
+
+    /**
+     * Delete a user by ID.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     * @returns {Promise&lt;void>} - A promise that resolves when the user is deleted.
+     */
+    deleteUser(req, res) {
+        const id = req.params.id;
+
+        try {
+            UserServices.deleteUser(id);
+            res.status(200).json({ message: "User deleted" });
+        }
+        catch(err) {
+            res.status(500).json({ message: err.message });
+        }
+    }
+}
+
+export default new UsersController();</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="DAOFactory.html">DAOFactory</a></li><li><a href="DAOSqliteFactory.html">DAOSqliteFactory</a></li><li><a href="PlayerDAO.html">PlayerDAO</a></li><li><a href="PlayerSqliteDAO.html">PlayerSqliteDAO</a></li><li><a href="PlayerTournamentDAO.html">PlayerTournamentDAO</a></li><li><a href="PlayerTournamentSqliteDAO.html">PlayerTournamentSqliteDAO</a></li><li><a href="PlayerTournamentsController.html">PlayerTournamentsController</a></li><li><a href="PlayersController.html">PlayersController</a></li><li><a href="TournamentDAO.html">TournamentDAO</a></li><li><a href="TournamentSqliteDAO.html">TournamentSqliteDAO</a></li><li><a href="TournamentsController.html">TournamentsController</a></li><li><a href="UserDAO.html">UserDAO</a></li><li><a href="UserSqliteDAO.html">UserSqliteDAO</a></li><li><a href="UsersController.html">UsersController</a></li></ul><h3>Global</h3><ul><li><a href="global.html#PlayerTournamentServices">PlayerTournamentServices</a></li><li><a href="global.html#PlayersServices">PlayersServices</a></li><li><a href="global.html#TournamentsServices">TournamentsServices</a></li><li><a href="global.html#UsersServices">UsersServices</a></li><li><a href="global.html#createDatabase">createDatabase</a></li><li><a href="global.html#disconnectPath">disconnectPath</a></li><li><a href="global.html#loginPath">loginPath</a></li><li><a href="global.html#playerTournamentPath">playerTournamentPath</a></li><li><a href="global.html#playersPath">playersPath</a></li><li><a href="global.html#tournamentsPath">tournamentsPath</a></li><li><a href="global.html#usersPath">usersPath</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Mon Dec 11 2023 22:54:20 GMT+0100 (heure normale d’Europe centrale)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
